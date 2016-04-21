@@ -1,0 +1,27 @@
+import re,os,sys
+if sys.argv[1].startswith('-'):
+    option = sys.argv[1][1]
+    if option == "h":
+        print("python sshinfo.py $sourcefile $targetfile ")
+
+if len(sys.argv) < 3:
+    print("Please add the target file or touch " -h" for help!")
+    sys.exit()
+script, src, des = sys.argv
+HOST = []
+HOSTNAME = []
+PORT = []
+print des
+with open(src) as f:
+    for line in f:
+        if re.search("^host", line):
+            HOST.append(line.split().pop())
+        if re.search("hostname", line):
+            HOSTNAME.append(line.split().pop())
+        if re.search("port", line):
+            PORT.append(line.split().pop())
+
+entry = zip(HOST,HOSTNAME,PORT)
+with open(des, 'a') as w:
+    for e in entry:
+        w.write(e[0] + " " + "ansible_ssh_host=" + e[1] + " " + "ansible_ssh_port=" + e[2] + '\n')
